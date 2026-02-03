@@ -60,47 +60,76 @@
 </div>
 
 <!-- Charts Section -->
-<div class="mt-8 bg-white rounded-lg shadow p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="text-lg font-semibold text-gray-800">Subscription Overview by Employee</h3>
-        <select id="monthFilter" onchange="updateChart()" class="rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
-            <option value="all">Overall</option>
-            @foreach(range(1, 12) as $m)
-                <option value="{{ $m }}" {{ $m == now()->month ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
-            @endforeach
-        </select>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+    <!-- Amount Chart -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800">Subscription Amount per Employee</h3>
+            <div class="flex gap-2">
+                <select id="yearFilter" onchange="updateCharts()" class="rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-sm">
+                    <option value="all">All Years</option>
+                    @foreach(range(now()->year, now()->year - 5) as $year)
+                        <option value="{{ $year }}" {{ $year == now()->year ? 'selected' : '' }}>{{ $year }}</option>
+                    @endforeach
+                </select>
+                <select id="monthFilter" onchange="updateCharts()" class="rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-sm">
+                    <option value="all">Overall</option>
+                    @foreach(range(1, 12) as $m)
+                        <option value="{{ $m }}" {{ $m == now()->month ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="relative h-80 w-full">
+            <canvas id="employeeSubscriptionsAmountChart"></canvas>
+        </div>
     </div>
-    <div class="relative h-80 w-full">
-        <canvas id="employeeSubscriptionsChart"></canvas>
+
+    <!-- Count Chart -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800">Subscription Count per Employee</h3>
+             <p class="text-xs text-gray-500">Filtered by Start Date</p>
+        </div>
+        <div class="relative h-80 w-full">
+            <canvas id="employeeSubscriptionsCountChart"></canvas>
+        </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let chartInstance = null;
+    let amountChartInstance = null;
+    let countChartInstance = null;
 
-    async function fetchChartData(month) {
-        const response = await fetch(`{{ route('admin.dashboard.chart-data') }}?month=${month}`);
+    async function fetchChartData(month, year) {
+        const response = await fetch(`{{ route('admin.dashboard.chart-data') }}?month=${month}&year=${year}`);
         return await response.json();
     }
 
-    async function updateChart() {
+    async function updateCharts() {
         const month = document.getElementById('monthFilter').value;
-        const data = await fetchChartData(month);
+        const year = document.getElementById('yearFilter').value;
+        const data = await fetchChartData(month, year);
 
-        if (chartInstance) {
-            chartInstance.destroy();
+        updateAmountChart(data);
+        updateCountChart(data);
+    }
+
+    function updateAmountChart(data) {
+        if (amountChartInstance) {
+            amountChartInstance.destroy();
         }
 
-        const ctx = document.getElementById('employeeSubscriptionsChart').getContext('2d');
-        chartInstance = new Chart(ctx, {
+        const ctx = document.getElementById('employeeSubscriptionsAmountChart').getContext('2d');
+        amountChartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: data.labels,
                 datasets: [{
                     label: 'Total Subscription Amount ($)',
-                    data: data.data,
-                    backgroundColor: 'rgba(234, 179, 8, 0.6)', // Primary yellow-ish
+                    data: data.amount_data,
+                    backgroundColor: 'rgba(234, 179, 8, 0.6)', 
                     borderColor: 'rgba(234, 179, 8, 1)',
                     borderWidth: 1,
                     borderRadius: 4,
@@ -112,27 +141,19 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                         grid: {
-                            color: '#f3f4f6'
-                        }
+                        grid: { color: '#f3f4f6' }
                     },
-                     x: {
-                        grid: {
-                            display: false
-                        }
+                    x: {
+                        grid: { display: false }
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
-                         callbacks: {
+                        callbacks: {
                             label: function(context) {
                                 let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
+                                if (label) label += ': ';
                                 if (context.parsed.y !== null) {
                                     label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
                                 }
@@ -145,7 +166,46 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', updateChart);
+    function updateCountChart(data) {
+        if (countChartInstance) {
+            countChartInstance.destroy();
+        }
+
+        const ctx = document.getElementById('employeeSubscriptionsCountChart').getContext('2d');
+        countChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Total Subscriptions Count',
+                    data: data.count_data,
+                    backgroundColor: 'rgba(59, 130, 246, 0.6)', // Blue
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 },
+                        grid: { color: '#f3f4f6' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', updateCharts);
 </script>
 
 <!-- Recent Subscriptions -->

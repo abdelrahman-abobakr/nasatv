@@ -17,26 +17,40 @@ class AdminDashboardController extends Controller
     public function getChartData(Request $request)
     {
         $month = $request->input('month');
+        $year = $request->input('year') ?? now()->year;
 
         $users = User::where('role', 'employee')
             ->select('name', 'id')
-            ->withSum(['subscriptions' => function ($query) use ($month) {
+            ->withSum(['subscriptions' => function ($query) use ($month, $year) {
                 if ($month && $month !== 'all') {
                     $query->whereMonth('created_at', $month)
-                          ->whereYear('created_at', now()->year);
+                          ->whereYear('created_at', $year);
+                } elseif ($year && $year !== 'all') {
+                    $query->whereYear('created_at', $year);
                 }
             }], 'amount')
+            ->withCount(['subscriptions' => function ($query) use ($month, $year) {
+                if ($month && $month !== 'all') {
+                    $query->whereMonth('start_date', $month)
+                          ->whereYear('start_date', $year);
+                } elseif ($year && $year !== 'all') {
+                    $query->whereYear('start_date', $year);
+                }
+            }])
             ->get();
 
         $labels = $users->pluck('name');
-        // If subscriptions_sum_amount is null, map it to 0
-        $data = $users->map(function ($user) {
+        
+        $amountData = $users->map(function ($user) {
             return $user->subscriptions_sum_amount ?? 0;
         });
 
+        $countData = $users->pluck('subscriptions_count');
+
         return response()->json([
             'labels' => $labels,
-            'data' => $data,
+            'amount_data' => $amountData,
+            'count_data' => $countData,
         ]);
     }
 }
