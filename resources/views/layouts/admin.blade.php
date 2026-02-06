@@ -14,12 +14,22 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gray-100">
+<body class="font-sans antialiased bg-gray-100" x-data="{ sidebarOpen: false }">
     <div class="min-h-screen flex">
         <!-- Sidebar -->
-        <aside class="w-64 bg-dark text-light flex-shrink-0">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold text-primary">NasaTV Admin</h1>
+        <aside 
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-dark text-light transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-0 flex-shrink-0">
+            <div class="p-6 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="{{ asset('assets/Nasa_logo.png') }}" alt="NasaTV Logo" class="h-10 w-auto">
+                    <h1 class="text-xl font-bold text-primary lg:hidden xl:block">NasaTV</h1>
+                </div>
+                <button @click="sidebarOpen = false" class="lg:hidden text-light">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
             
             <nav class="mt-6">
@@ -75,7 +85,14 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col">
             <!-- Top Bar -->
-            <header class="bg-white shadow-sm">
+            <header class="bg-white shadow-sm flex items-center">
+                <div class="lg:hidden px-4">
+                    <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none focus:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
                 <div class="px-6 py-4">
                     <h2 class="text-xl font-semibold text-gray-800">@yield('header', 'Dashboard')</h2>
                 </div>
