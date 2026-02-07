@@ -12,6 +12,24 @@ class Plan extends Model
         'price',
         'duration',
         'description',
-        'status'
+        'status',
+        'channels',
+        'movies',
+        'series',
+        'extras',
+        'max_resolution',
+        'simultaneous_devices',
+        'match_recording',
+        'multi_audio_subtitles',
+        'support_24_7',
+        'instant_activation',
+    ];
+
+    protected $casts = [
+        'extras' => 'array',
+        'match_recording' => 'boolean',
+        'multi_audio_subtitles' => 'boolean',
+        'support_24_7' => 'boolean',
+        'instant_activation' => 'boolean',
     ];
 }

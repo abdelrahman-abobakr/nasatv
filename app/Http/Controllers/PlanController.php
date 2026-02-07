@@ -29,15 +29,32 @@ class PlanController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
             'duration' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'status' => ['required', 'in:active,inactive'],
+            'channels' => ['nullable', 'integer', 'min:0'],
+            'movies' => ['nullable', 'integer', 'min:0'],
+            'series' => ['nullable', 'integer', 'min:0'],
+            'extras' => ['nullable', 'array'],
+            'extras.*' => ['nullable', 'string', 'max:255'],
+            'max_resolution' => ['nullable', 'string', 'max:255'],
+            'simultaneous_devices' => ['nullable', 'integer', 'min:1'],
+            'match_recording' => ['nullable', 'boolean'],
+            'multi_audio_subtitles' => ['nullable', 'boolean'],
+            'support_24_7' => ['nullable', 'boolean'],
+            'instant_activation' => ['nullable', 'boolean'],
         ]);
 
-        Plan::create($request->all());
+        // Handle boolean fields which are not sent if unchecked
+        $booleanFields = ['match_recording', 'multi_audio_subtitles', 'support_24_7', 'instant_activation'];
+        foreach ($booleanFields as $field) {
+            $validated[$field] = $request->has($field);
+        }
+
+        Plan::create($validated);
 
         return redirect()->route('admin.plans.index')
             ->with('success', 'Plan created successfully.');
@@ -56,15 +73,32 @@ class PlanController extends Controller
      */
     public function update(Request $request, Plan $plan)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
             'duration' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'status' => ['required', 'in:active,inactive'],
+            'channels' => ['nullable', 'integer', 'min:0'],
+            'movies' => ['nullable', 'integer', 'min:0'],
+            'series' => ['nullable', 'integer', 'min:0'],
+            'extras' => ['nullable', 'array'],
+            'extras.*' => ['nullable', 'string', 'max:255'],
+            'max_resolution' => ['nullable', 'string', 'max:255'],
+            'simultaneous_devices' => ['nullable', 'integer', 'min:1'],
+            'match_recording' => ['nullable', 'boolean'],
+            'multi_audio_subtitles' => ['nullable', 'boolean'],
+            'support_24_7' => ['nullable', 'boolean'],
+            'instant_activation' => ['nullable', 'boolean'],
         ]);
 
-        $plan->update($request->all());
+        // Handle boolean fields
+        $booleanFields = ['match_recording', 'multi_audio_subtitles', 'support_24_7', 'instant_activation'];
+        foreach ($booleanFields as $field) {
+            $validated[$field] = $request->has($field);
+        }
+
+        $plan->update($validated);
 
         return redirect()->route('admin.plans.index')
             ->with('success', 'Plan updated successfully.');
