@@ -17,76 +17,88 @@
 
     <!-- Search and Filter -->
     <div class="p-6 border-b border-gray-100 bg-white">
-        <form method="GET" action="{{ route('admin.subscriptions.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search client or phone..." 
-                       class="w-full border border-gray-200 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm">
+        <form method="GET" action="{{ route('admin.subscriptions.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest">Search</label>
+                <div class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Client name or phone..." 
+                           class="w-full border border-gray-200 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm h-11">
+                </div>
             </div>
             
             <!-- Searchable Employee Dropdown -->
-            <div x-data="{
-                open: false,
-                search: '',
-                selectedId: '{{ request('employee') }}',
-                selectedName: '',
-                options: [
-                    { id: '', name: 'All Employees' },
-                    @foreach($employees as $emp)
-                        { id: '{{ $emp->id }}', name: '{{ addslashes($emp->name) }} ({{ $emp->email }})' },
-                    @endforeach
-                ],
-                init() {
-                    const selected = this.options.find(o => o.id == this.selectedId);
-                    this.selectedName = selected ? selected.name : 'All Employees';
-                },
-                get filteredOptions() {
-                    return this.search === '' ? this.options : this.options.filter(o => o.name.toLowerCase().includes(this.search.toLowerCase()));
-                },
-                select(option) {
-                    this.selectedId = option.id;
-                    this.selectedName = option.name;
-                    this.open = false;
-                    this.search = '';
-                }
-            }" class="relative" @click.away="open = false">
-                <input type="hidden" name="employee" :value="selectedId">
-                <div @click="open = !open" class="border border-gray-200 rounded-lg p-2 bg-white cursor-pointer flex justify-between items-center h-10 text-sm">
-                    <span x-text="selectedName" class="truncate"></span>
-                    <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7" /></svg>
-                </div>
-                <div x-show="open" x-cloak class="absolute z-50 mt-1 w-full bg-white shadow-xl rounded-lg border border-gray-100 max-h-60 overflow-y-auto">
-                    <div class="sticky top-0 bg-white p-2 border-b">
-                         <input x-model="search" type="text" placeholder="Filter..." class="w-full border-gray-200 rounded-md text-xs p-2">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Employee</label>
+                <div x-data="{
+                    open: false,
+                    search: '',
+                    selectedId: '{{ request('employee') }}',
+                    selectedName: '',
+                    options: [
+                        { id: '', name: 'All Employees' },
+                        @foreach($employees as $emp)
+                            { id: '{{ $emp->id }}', name: '{{ addslashes($emp->name) }} ({{ $emp->email }})' },
+                        @endforeach
+                    ],
+                    init() {
+                        const selected = this.options.find(o => o.id == this.selectedId);
+                        this.selectedName = selected ? selected.name : 'All Employees';
+                    },
+                    get filteredOptions() {
+                        return this.search === '' ? this.options : this.options.filter(o => o.name.toLowerCase().includes(this.search.toLowerCase()));
+                    },
+                    select(option) {
+                        this.selectedId = option.id;
+                        this.selectedName = option.name;
+                        this.open = false;
+                        this.search = '';
+                    }
+                }" class="relative" @click.away="open = false">
+                    <input type="hidden" name="employee" :value="selectedId">
+                    <div @click="open = !open" class="border border-gray-200 rounded-lg p-2 bg-white cursor-pointer flex justify-between items-center h-11 text-sm">
+                        <span x-text="selectedName" class="truncate font-medium text-gray-700"></span>
+                        <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7" /></svg>
                     </div>
+                    <div x-show="open" x-cloak class="absolute z-50 mt-1 w-full bg-white shadow-xl rounded-lg border border-gray-100 max-h-60 overflow-y-auto">
+                        <div class="sticky top-0 bg-white p-2 border-b">
+                             <input x-model="search" type="text" placeholder="Filter employees..." class="w-full border-gray-200 rounded-md text-xs p-2 focus:ring-primary focus:border-primary">
+                        </div>
                     <template x-for="option in filteredOptions" :key="option.id">
                         <div @click="select(option)" class="p-2.5 hover:bg-gray-50 cursor-pointer text-xs font-medium border-b border-gray-50 last:border-0" :class="{'bg-primary/10 text-primary font-bold': selectedId == option.id}" x-text="option.name"></div>
                     </template>
                 </div>
             </div>
+        </div>
 
-            <select name="status" class="border border-gray-200 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm">
-                <option value="">Status: All</option>
-                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                <option value="expire_soon" {{ request('status') == 'expire_soon' ? 'selected' : '' }}>Expire Soon</option>
-                <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
-            </select>
-            
-            <div class="flex gap-2">
-                <input type="date" name="start_date" value="{{ request('start_date') }}" class="flex-1 border border-gray-200 rounded-lg text-sm px-3">
-                <input type="date" name="end_date" value="{{ request('end_date') }}" class="flex-1 border border-gray-200 rounded-lg text-sm px-3">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest">Subscription Status</label>
+                <select name="status" class="w-full border border-gray-200 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm h-11 bg-white">
+                    <option value="">Status: All</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="expire_soon" {{ request('status') == 'expire_soon' ? 'selected' : '' }}>Expire Soon</option>
+                    <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
+                </select>
             </div>
             
-            <div class="md:col-span-4 flex flex-wrap gap-2 pt-2">
-                <button type="submit" class="flex-1 md:flex-initial bg-dark hover:bg-gray-800 text-light font-bold py-2 px-8 rounded-lg transition-all">
-                    Filter Results
+            <div class="space-y-2 md:col-span-1">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest">Date Range (Start - End)</label>
+                <div class="flex gap-2">
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="flex-1 border border-gray-200 rounded-lg text-sm px-3 h-11 focus:ring-primary">
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="flex-1 border border-gray-200 rounded-lg text-sm px-3 h-11 focus:ring-primary">
+                </div>
+            </div>
+            
+            <div class="lg:col-span-4 flex flex-wrap gap-3 pt-4 items-end">
+                <button type="submit" class="flex-1 md:flex-initial bg-dark hover:bg-gray-800 text-light font-bold py-3 px-10 rounded-xl transition-all shadow-sm hover:shadow-md">
+                    Apply Filters
                 </button>
-                <button type="submit" formaction="{{ route('admin.subscriptions.export') }}" class="flex-1 md:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-8 rounded-lg transition-all flex items-center justify-center">
+                <button type="submit" formaction="{{ route('admin.subscriptions.export') }}" class="flex-1 md:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-10 rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Export Data
+                    Export to Excel
                 </button>
                 @if(request()->anyFilled(['search', 'employee', 'status', 'start_date', 'end_date']))
-                    <a href="{{ route('admin.subscriptions.index') }}" class="w-full md:w-auto bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-6 rounded-lg text-center transition-all">
-                        Reset
+                    <a href="{{ route('admin.subscriptions.index') }}" class="w-full md:w-auto text-gray-400 hover:text-gray-600 font-bold py-2 px-6 rounded-lg text-center transition-all text-sm">
+                        Clear Filters
                     </a>
                 @endif
             </div>

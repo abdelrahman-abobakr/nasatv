@@ -45,13 +45,13 @@
                         this.open = false;
                     }
                 }" class="space-y-2">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest">Revenue Manager</label>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest">Select Employee</label>
                     <input type="hidden" name="added_by" :value="selectedId">
                     
                     <div class="relative" @click.away="open = false">
                         <div @click="open = !open" 
                              class="w-full rounded-lg border border-gray-200 shadow-sm p-3 bg-white cursor-pointer flex justify-between items-center min-h-[42px] transition-all focus-within:ring-2 focus-within:ring-primary/20">
-                            <span x-text="selectedName || 'Select Manager (Defaults to you)'" :class="{'text-gray-400 font-medium': !selectedName, 'text-gray-900 font-bold': selectedName}" class="text-sm truncate"></span>
+                            <span x-text="selectedName || 'Choose Personnel (Defaults to you)'" :class="{'text-gray-400 font-medium': !selectedName, 'text-gray-900 font-bold': selectedName}" class="text-sm truncate"></span>
                             <div class="flex items-center">
                                 <span x-show="selectedName" @click.stop="clear()" class="mr-2 text-gray-400 hover:text-gray-600 cursor-pointer p-1">&times;</span>
                                 <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7" /></svg>
@@ -61,7 +61,7 @@
                         <div x-show="open" x-cloak
                              class="absolute z-50 mt-1 w-full bg-white shadow-xl rounded-lg border border-gray-100 max-h-60 overflow-y-auto">
                             <div class="sticky top-0 bg-white p-2 border-b border-gray-50">
-                                 <input x-model="search" type="text" placeholder="Filter managers..." 
+                                 <input x-model="search" type="text" placeholder="Filter employees..." 
                                         class="w-full border-gray-200 rounded-md text-xs p-2 focus:ring-primary focus:border-primary">
                             </div>
                             <template x-for="option in filteredOptions" :key="option.id">

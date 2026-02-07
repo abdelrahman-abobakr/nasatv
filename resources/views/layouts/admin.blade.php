@@ -16,14 +16,13 @@
 </head>
 <body class="font-sans antialiased bg-gray-100" x-data="{ sidebarOpen: false }">
     <div class="min-h-screen flex">
-        <!-- Sidebar -->
         <aside 
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-dark text-light transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-0 flex-shrink-0">
-            <div class="p-6 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <img src="{{ asset('assets/Nasa_logo.png') }}" alt="NasaTV Logo" class="h-10 w-auto">
-                    <h1 class="text-xl font-bold text-primary lg:hidden xl:block">NasaTV</h1>
+            class="fixed inset-y-0 left-0 z-50 w-72 bg-dark text-light transition-transform duration-300 transform lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen flex-shrink-0 flex flex-col overflow-y-auto">
+            <div class="p-2 flex items-center justify-center gap-3 border-b border-gray-800/50">
+                <div class="flex items-center justify-center">
+                    <img src="{{ asset('assets/Nasa_logo.png') }}" alt="NasaTV Logo" class="h-16 w-auto drop-shadow-xl">
+                    <!-- <h1 class="text-xl font-black text-primary tracking-widest hidden xl:block">NasaTV</h1> -->
                 </div>
                 <button @click="sidebarOpen = false" class="lg:hidden text-light">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +65,7 @@
                 </a>
             </nav>
             
-            <div class="absolute bottom-0 w-64 p-6 border-t border-gray-800">
+            <div class="mt-auto w-72 p-6 border-t border-gray-800">
                 <div class="flex items-center">
                     <div class="flex-1">
                         <p class="text-sm font-medium text-light">{{ auth()->user()->name }}</p>
