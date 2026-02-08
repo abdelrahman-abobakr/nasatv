@@ -23,10 +23,10 @@ class AdminDashboardController extends Controller
             ->select('name', 'id')
             ->withSum(['subscriptions' => function ($query) use ($month, $year) {
                 if ($month && $month !== 'all') {
-                    $query->whereMonth('created_at', $month)
-                          ->whereYear('created_at', $year);
+                    $query->whereMonth('start_date', $month)
+                          ->whereYear('start_date', $year);
                 } elseif ($year && $year !== 'all') {
-                    $query->whereYear('created_at', $year);
+                    $query->whereYear('start_date', $year);
                 }
             }], 'amount')
             ->withCount(['subscriptions' => function ($query) use ($month, $year) {

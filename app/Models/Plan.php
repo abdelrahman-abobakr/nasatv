@@ -12,6 +12,7 @@ class Plan extends Model
         'price',
         'duration',
         'description',
+        'notes',
         'status',
         'channels',
         'movies',

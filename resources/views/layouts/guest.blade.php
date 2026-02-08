@@ -13,16 +13,19 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('assets/Nasa_logo.png') }}">
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
+    <body class="font-sans text-gray-200 antialiased bg-dark selection:bg-primary selection:text-dark">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-gray-900 via-dark to-black">
+            <div class="mb-8 transform hover:scale-105 transition-transform duration-500">
                 <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+                    <x-application-logo class="h-24 w-auto drop-shadow-[0_0_15px_rgba(255,188,14,0.3)]" />
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full sm:max-w-md px-8 py-10 bg-gray-900/50 backdrop-blur-xl border border-gray-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden sm:rounded-2xl">
                 {{ $slot }}
             </div>
         </div>

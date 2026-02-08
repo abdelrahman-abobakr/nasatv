@@ -11,6 +11,9 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('assets/Nasa_logo.png') }}">
 </head>
 <body class="font-sans antialiased">
     <!-- Navigation -->

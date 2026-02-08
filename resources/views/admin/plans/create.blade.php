@@ -55,9 +55,20 @@
                 <div>
                     <label for="description" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Package Description (Optional)</label>
                     <textarea name="description" id="description" rows="3"
-                              class="w-full rounded-lg border-gray-200 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 @error('description') border-red-500 @enderror"
-                              placeholder="Briefly describe the benefits of this tier...">{{ old('description') }}</textarea>
+                               class="w-full rounded-lg border-gray-200 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 @error('description') border-red-500 @enderror"
+                               placeholder="Briefly describe the benefits of this tier...">{{ old('description') }}</textarea>
                     @error('description')
+                        <p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Admin Notes -->
+                <div>
+                    <label for="notes" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Admin Notes (Internal Only)</label>
+                    <textarea name="notes" id="notes" rows="2"
+                               class="w-full rounded-lg border-gray-200 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 @error('notes') border-red-500 @enderror"
+                               placeholder="Add internal notes about this plan...">{{ old('notes') }}</textarea>
+                    @error('notes')
                         <p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>
                     @enderror
                 </div>

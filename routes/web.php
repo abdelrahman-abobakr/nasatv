@@ -19,6 +19,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard/chart-data', [\App\Http\Controllers\AdminDashboardController::class, 'getChartData'])->name('dashboard.chart-data');
 
     // User management
+    Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
     Route::resource('users', UserController::class);
 
     // Plan management

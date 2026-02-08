@@ -36,23 +36,42 @@
                     </div>
                 </div>
 
-                <!-- Role Section -->
-                <div>
-                    <label for="role" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Access Level</label>
-                    <div class="relative">
-                        <select name="role" id="role" required
-                                class="w-full rounded-lg border-gray-200 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 appearance-none bg-white pr-10 @error('role') border-red-500 @enderror">
-                            <option value="">Choose a role...</option>
-                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrator (Full Access)</option>
-                            <option value="employee" {{ old('role') == 'employee' ? 'selected' : '' }}>Employee (Standard Access)</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7" /></svg>
+                <!-- Role & Status Group -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="role" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Access Level</label>
+                        <div class="relative">
+                            <select name="role" id="role" required
+                                    class="w-full rounded-lg border-gray-200 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 appearance-none bg-white pr-10 @error('role') border-red-500 @enderror">
+                                <option value="">Choose a role...</option>
+                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrator</option>
+                                <option value="employee" {{ old('role') == 'employee' ? 'selected' : '' }}>Employee</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7" /></svg>
+                            </div>
                         </div>
+                        @error('role')
+                            <p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('role')
-                        <p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>
-                    @enderror
+
+                    <div>
+                        <label for="status" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Account Status</label>
+                        <div class="relative">
+                            <select name="status" id="status" required
+                                    class="w-full rounded-lg border-gray-200 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 appearance-none bg-white pr-10 @error('status') border-red-500 @enderror">
+                                <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7" /></svg>
+                            </div>
+                        </div>
+                        @error('status')
+                            <p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <hr class="border-gray-100">

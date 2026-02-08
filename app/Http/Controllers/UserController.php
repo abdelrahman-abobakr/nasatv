@@ -52,6 +52,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:admin,employee'],
+            'status' => ['required', 'in:active,inactive'],
         ]);
 
         User::create([
@@ -59,6 +60,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'status' => $request->status,
         ]);
 
         return redirect()->route('admin.users.index')
@@ -82,12 +84,14 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'role' => ['required', 'in:admin,employee'],
+            'status' => ['required', 'in:active,inactive'],
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'status' => $request->status,
         ]);
 
         // Update password if provided
@@ -102,6 +106,20 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')
             ->with('success', 'User updated successfully.');
+    }
+
+    public function toggleStatus(User $user)
+    {
+        // Prevent disabling yourself
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'You cannot disable your own account.');
+        }
+
+        $user->update([
+            'status' => $user->status === 'active' ? 'inactive' : 'active'
+        ]);
+
+        return back()->with('success', 'User status updated successfully.');
     }
 
     /**

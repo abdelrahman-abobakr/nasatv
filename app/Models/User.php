@@ -22,12 +22,13 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -39,14 +40,19 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class, 'added_by');
     }
 
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    public function isEmployee()
+    public function isEmployee(): bool
     {
         return $this->role === 'employee';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
     }
 
     /**
